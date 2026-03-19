@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sentiment Thing</title>
+    
+    <!-- i learned css today!! -->
+    <style>
+        body {
+            background-color: lightblue;
+        }
+        
+        h1 {
+            color: purple;
+            font-size: 40px;
+        }
+        
+        p {
+            font-size: 18px;
+        }
+        
+        /* making the button look cool */
+        button {
+            background-color: green;
+            color: white;
+            font-size: 20px;
+            padding: 10px;
+            border-radius: 5px; /* i learned this from youtube */
+        }
+        
+        button:hover {
+            background-color: darkgreen; /* hover effect!! */
+        }
+        
+        #myTextarea {
+            width: 400px;
+            height: 150px;
+            font-size: 16px;
+        }
+        
+        #answerDiv {
+            font-size: 24px;
+            color: red; /* i will change this later */
+            margin-top: 20px;
+        }
+        
+        .box {
+            background-color: white;
+            padding: 20px;
+            border: 2px solid black;
+            width: 500px;
+            /* how do i center this?? */
+            margin-left: 100px;
+            margin-top: 30px;
+        }
+        
+    </style>
+
+</head>
+<body>
+
+    <h1>Sentiment Analyzer</h1>
+    <p>This website can tell if your text is positive or negative. I made it for my assignment.</p>
+    <p>It uses AI which is like machine learning I think.</p>
+
+    <div class="box">
+        
+        <p><b>Instructions:</b></p>
+        <p>1. Type something in the box below</p>
+        <p>2. Click the button</p>
+        <p>3. See the result</p>
+        
+        <br>
+        
+        <!-- the text input thing -->
+        <textarea id="myTextarea" placeholder="type here"></textarea>
+        
+        <br>
+        <br>
+        
+        <button onclick="myFunction()">Analyze</button>
+        
+        <!-- TODO: add a clear button maybe -->
+        
+        <div id="answerDiv">
+            <!-- the answer will go here -->
+        </div>
+        
+    </div>
+    
+    <br>
+    
+    <!-- i copied this from stackoverflow -->
+    <p style="color: gray; font-size: 12px;">made by Pritam Sharma | 2026</p>
+
+    <script>
+        
+        // this is the main function
+        async function myFunction() {
+            
+            var text = document.getElementById("myTextarea").value
+            
+            // check if empty
+            if (text == "") {
+                alert("please type something")
+                return // stop the function
+            }
+            
+            // show loading
+            document.getElementById("answerDiv").innerHTML = "loading..."
+            
+            // call the api (i learned this from a tutorial)
+            var response = await fetch("/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({text: text}) // convert to json
+            })
+            
+            var data = await response.json() // get the data
+            
+            // show result
+            // TODO: make this look nicer
+            if (data.label == "positive") {
+                document.getElementById("answerDiv").innerHTML = "POSITIVE 😊 (" + data.confidence + "% confident)"
+            } else {
+                document.getElementById("answerDiv").innerHTML = "NEGATIVE 😞 (" + data.confidence + "% confident)"
+            }
+            
+            // what if there is an error?? idk
+            if (data.error) {
+                document.getElementById("answerDiv").innerHTML = "something went wrong"
+            }
+            
+        }
+        
+    </script>
+
+</body>
+</html>
